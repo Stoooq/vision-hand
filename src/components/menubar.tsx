@@ -15,12 +15,7 @@ export function Menubar({ onToggle }: MenubarProps) {
 
 	return (
 		<div className="relative">
-			{/* Hamburger Icon */}
-
-			<div
-				className="flex flex-col justify-between w-8 h-6 cursor-pointer z-50 relative"
-				onClick={toggleMenu}
-			>
+			<div className="cursor-pointer" onClick={toggleMenu}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="24"
@@ -43,15 +38,15 @@ export function Menubar({ onToggle }: MenubarProps) {
 					/>
 					<motion.line
 						initial={{rotate: 0, y: 0}}
-                        animate={{rotate: isOpen ? 45 : 0, y: isOpen ? 6 : 0}}
+						animate={{rotate: isOpen ? 45 : 0, y: isOpen ? 6 : 0}}
 						x1="4"
 						x2="20"
 						y1="6"
 						y2="6"
 					/>
 					<motion.line
-						initial={{rotate: 0, y: 0}}
-                        animate={{rotate: isOpen ? -45 : 0, y: isOpen ? -6 : 0}}
+						initial={{ rotate: 0, y: 0 }}
+						animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -6 : 0 }}
 						x1="4"
 						x2="20"
 						y1="18"
