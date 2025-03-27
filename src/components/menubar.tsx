@@ -1,21 +1,14 @@
 import { motion } from "motion/react";
-import { useState } from "react";
 
 interface MenubarProps {
+    isMenuOpen: boolean;
 	onToggle: () => void;
 }
 
-export function Menubar({ onToggle }: MenubarProps) {
-	const [isOpen, setIsOpen] = useState(false);
-
-	const toggleMenu = () => {
-		setIsOpen(!isOpen);
-		onToggle();
-	};
-
+export function Menubar({ isMenuOpen, onToggle }: MenubarProps) {
 	return (
 		<div className="relative">
-			<div className="cursor-pointer" onClick={toggleMenu}>
+			<div className="cursor-pointer" onClick={onToggle}>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="24"
@@ -30,7 +23,7 @@ export function Menubar({ onToggle }: MenubarProps) {
 				>
 					<motion.line
 						initial={{ opacity: 1 }}
-						animate={{ opacity: isOpen ? 0 : 1, transition: { duration: 0.1 } }}
+						animate={{ opacity: isMenuOpen ? 0 : 1, transition: { duration: 0.1 } }}
 						x1="4"
 						x2="20"
 						y1="12"
@@ -38,7 +31,7 @@ export function Menubar({ onToggle }: MenubarProps) {
 					/>
 					<motion.line
 						initial={{rotate: 0, y: 0}}
-						animate={{rotate: isOpen ? 45 : 0, y: isOpen ? 6 : 0}}
+						animate={{rotate: isMenuOpen ? 45 : 0, y: isMenuOpen ? 6 : 0}}
 						x1="4"
 						x2="20"
 						y1="6"
@@ -46,7 +39,7 @@ export function Menubar({ onToggle }: MenubarProps) {
 					/>
 					<motion.line
 						initial={{ rotate: 0, y: 0 }}
-						animate={{ rotate: isOpen ? -45 : 0, y: isOpen ? -6 : 0 }}
+						animate={{ rotate: isMenuOpen ? -45 : 0, y: isMenuOpen ? -6 : 0 }}
 						x1="4"
 						x2="20"
 						y1="18"

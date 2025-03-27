@@ -14,11 +14,11 @@ export function Navbar() {
 	};
 
 	return (
-		<div className="min-h-[56px]">
+		<div className="min-h-[56px] bg-[#f8f8f8]">
 			<motion.nav className="fixed top-0 w-full bg-white py-4 px-6 z-50 border-b-1 border-zinc-200">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center z-10">
-						<Menubar onToggle={handleMenuToggle} />
+						<Menubar isMenuOpen={isMenuOpen} onToggle={handleMenuToggle} />
 					</div>
 
 					<div className="absolute left-0 right-0 mx-auto w-full flex justify-center">
@@ -57,12 +57,10 @@ export function Navbar() {
 						>
 							<div className="flex justify-center p-8">
 								<div className="py-4 px-8 hover:bg-gray-100">
-									<Link href="/products">Products</Link>
+									<Link href="/products" onClick={() => handleMenuToggle()}>Products</Link>
 								</div>
 								<div className="py-4 px-8 hover:bg-gray-100">
-									<a href="/uslugi" className="text-gray-800 text-lg">
-										Usługi
-									</a>
+									<Link href="/new-product" onClick={() => handleMenuToggle()}>Add Product</Link>
 								</div>
 								<div className="py-4 px-8 hover:bg-gray-100">
 									<a href="/portfolio" className="text-gray-800 text-lg">

@@ -3,7 +3,7 @@ import { Separator } from "./ui/separator";
 export function Footer() {
 	return (
 		<>
-			<div className="min-h-[56px] mt-8">
+			<div className="min-h-[56px] bg-white">
 				<Separator />
 				<div className="flex justify-between items-center p-6">
                     <div className="text-6xl">VISIONHAND</div>
