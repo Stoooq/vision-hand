@@ -66,7 +66,7 @@ export default function NewProductPage() {
 				urls.push(imageUrl);
 			}
 
-			createProduct(values, urls).then((data) => {
+			await createProduct(values, urls).then((data) => {
 				if (data?.error) {
 					form.reset();
 				}

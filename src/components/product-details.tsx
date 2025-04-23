@@ -1,15 +1,37 @@
 "use client";
 
+import { deleteProduct } from "@/actions/delete-product";
 import DropdownText from "@/components/dropdown-text";
 import { ImageSchema } from "@/db/schema/image";
-import { ProductSchema } from "@/db/schema/product";
+import { ProductSelectSchema } from "@/db/schema/product";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 export default function ProductPage({
 	product,
 }: {
-	product: ProductSchema & { image: ImageSchema[] };
+	product: ProductSelectSchema & { image: ImageSchema[] };
 }) {
+	const router = useRouter();
+
+	const [isEditPending, startEditTransition] = useTransition();
+	const handleEdit = () => {
+		startEditTransition(async () => {});
+	};
+
+	const [isDeletePending, startDeleteTransition] = useTransition();
+	const handleDelete = (productId: number) => {
+		startDeleteTransition(async () => {
+			deleteProduct(productId).then((res) => {
+				router.refresh();
+			});
+			setTimeout(() => {
+				router.push("/products");
+			});
+		});
+	};
+
 	return (
 		<>
 			<div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -66,11 +88,19 @@ export default function ProductPage({
 								{product.productName}
 							</div>
 							<div className="flex gap-4">
-								<button className="p-2 cursor-pointer border-b border-gray-200">
+								<button
+									className="p-2 cursor-pointer border-b border-gray-200"
+									onClick={handleEdit}
+									disabled={isEditPending}
+								>
 									Edit
 								</button>
 
-								<button className="p-2 cursor-pointer border-b border-gray-200">
+								<button
+									className="p-2 cursor-pointer border-b border-gray-200"
+									onClick={() => handleDelete(product.id)}
+									disabled={isDeletePending}
+								>
 									Delete
 								</button>
 							</div>

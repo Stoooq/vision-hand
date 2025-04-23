@@ -5,6 +5,7 @@ import { db } from "@/db";
 export const getAllProducts = async () => {
 	try {
 		const products = await db.query.product.findMany({
+			where: (product, { eq }) => eq(product.isDeleted, false),
 			with: {
 				image: true,
 			},
