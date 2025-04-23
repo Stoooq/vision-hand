@@ -3,6 +3,7 @@
 import DropdownText from "@/components/dropdown-text";
 import { ImageSchema } from "@/db/schema/image";
 import { ProductSchema } from "@/db/schema/product";
+import Image from "next/image";
 
 export default function ProductPage({
 	product,
@@ -14,15 +15,47 @@ export default function ProductPage({
 			<div className="max-w-7xl mx-auto px-4 md:px-8">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
 					<div className="space-y-4">
-						<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-							<div className="w-full h-full object-cover" />
+						<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+							{product.image ? (
+								<Image
+									src={product.image[0].imageUrl}
+									alt="Selected Image"
+									fill
+									className="w-full h-full object-cover"
+								/>
+							) : (
+								<div className="w-full h-full object-cover" />
+							)}
 						</div>
 						<div className="grid grid-cols-2 gap-4">
-							<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-								<div className="w-full h-full object-cover" />
+							<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+								{product.image ? (
+									<Image
+										src={product.image[0].imageUrl}
+										alt="Selected Image"
+										fill
+										className="w-full h-full object-cover"
+									/>
+								) : (
+									<div className="w-full h-full object-cover" />
+								)}
 							</div>
-							<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-								<div className="flex justify-center items-center w-full h-full object-cover" />
+							<div className="relative">
+								<button className="absolute bg-white p-2 border-2 border-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer">
+									Show more
+								</button>
+								<div className="relative w-full aspect-square bg-gray-100 overflow-hidden blur-md">
+									{product.image ? (
+										<Image
+											src={product.image[0].imageUrl}
+											alt="Selected Image"
+											fill
+											className="w-full h-full object-cover"
+										/>
+									) : (
+										<div className="w-full h-full object-cover" />
+									)}
+								</div>
 							</div>
 						</div>
 					</div>

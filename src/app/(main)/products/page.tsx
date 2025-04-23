@@ -46,12 +46,17 @@ export default async function ProductsPage() {
 					</div>
 					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8 mt-8">
 						{products?.map((product) => (
-							<Link href={`/products/${product.id}`} key={product.id} className="relative w-full aspect-1/1 bg-gray-100 overflow-hidden">
+							<Link
+								href={`/products/${product.id}`}
+								key={product.id}
+								className="flex flex-col bg-gray-100 overflow-hidden"
+							>
 								<Image
 									src={product.image[0].imageUrl}
 									alt="Selected Image"
-									fill
-									className="w-full h-full object-cover"
+									width={200}
+									height={200}
+									className="w-full h-full aspect-square object-contain"
 								/>
 								<div className="p-2">
 									<div className="font-semibold">{product.productName}</div>
