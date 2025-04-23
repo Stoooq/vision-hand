@@ -1,20 +1,13 @@
-// import DropdownMenu from "@/components/dropdown-menu";
 import Pagination from "@/components/pagination";
+import { getAllProducts } from "@/data/product";
 import { ChevronDown, Search } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
-// const dropDownMenuItems = {
-// 	Category: {
-// 		"jewellery": ["rings", "necklaces", "bracelets", "earrings", "watches"],
-// 		"pictures": ["paintings", "photographs", "digital art", "sketches", "prints"],
-// 		"toys": ["plush toys", "board games", "puzzles", "action figures", "educational toys"],
-// 		"natural products": ["essential oils", "herbal teas", "soaps", "candles", "cosmetics"],
-// 		"clothes": ["shoes", "hats", "shirts", "pants", "dresses", "jackets"],
-// 		"ceramics": ["mugs", "plates", "vases", "decorations", "tableware"],
-// 	},
-// 	Color: ["red", "blue", "green", "yellow", "black", "white"],
-// };
+export default async function ProductsPage() {
+	const products = await getAllProducts();
+	console.log(products);
 
-export default function ProductsPage() {
 	return (
 		<>
 			<div className="w-full bg-[#f8f8f8] py-8">
@@ -51,15 +44,25 @@ export default function ProductsPage() {
 							56 items Sort By: Price
 						</div>
 					</div>
-					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-12 mt-8">
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
-						<div className="aspect-2/3 bg-slate-200"></div>
+					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8 mt-8">
+						{products?.map((product) => (
+							<Link href={`/products/${product.id}`} key={product.id} className="relative w-full aspect-1/1 bg-gray-100 overflow-hidden">
+								<Image
+									src={product.image[0].imageUrl}
+									alt="Selected Image"
+									fill
+									className="w-full h-full object-cover"
+								/>
+								<div className="p-2">
+									<div className="font-semibold">{product.productName}</div>
+									<div className="flex gap-4 text-muted-foreground">
+										<div>Price: {product.price} €</div>
+										<span>|</span>
+										<div>Delivery: {product.delivery} days</div>
+									</div>
+								</div>
+							</Link>
+						))}
 					</div>
 					<div className="mt-8">
 						<div className="flex justify-center gap-8">

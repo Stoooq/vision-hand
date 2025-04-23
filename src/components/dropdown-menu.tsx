@@ -1,12 +1,17 @@
 "use client";
 
+import { newProductSchema } from "@/schemas";
 import { ChevronDown, ChevronLeft } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { ControllerRenderProps, FieldPath } from "react-hook-form";
+import { z } from "zod";
 
 type SubcategoryMap = {
 	[category: string]: string[];
 };
+
+type NewProductForm = z.infer<typeof newProductSchema>;
 
 type MenuItems = string[] | SubcategoryMap;
 
@@ -19,7 +24,7 @@ export default function DropdownMenu({
 	title: string;
 	items: MenuItems | null;
 	variant: "nested" | "input";
-	field?: any;
+	field?: ControllerRenderProps<NewProductForm, FieldPath<NewProductForm>>;
 }) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -123,6 +128,7 @@ export default function DropdownMenu({
 													className="w-full"
 												>
 													<motion.button
+														type="button"
 														// initial={{ opacity: 0, y: -10 }}
 														// animate={{ opacity: 1, y: 0 }}
 														// exit={{ opacity: 0, y: -10 }}

@@ -7,18 +7,34 @@ import { newProductSchema } from "@/schemas";
 import { Form, FormField } from "@/components/ui/form";
 import DropdownMenu from "@/components/dropdown-menu";
 import { Plus } from "lucide-react";
-import { useTransition } from "react";
+import { ChangeEvent, useRef, useState, useTransition } from "react";
 import { createProduct } from "@/actions/create-product";
 import { Categories } from "@/lib/const";
+import Image from "next/image";
+import { convertBlobUrlToImage } from "@/lib/utils";
+import { uploadImage } from "@/db/supabase/storage/client";
 
 export default function NewProductPage() {
 	const [isPending, startTransition] = useTransition();
+	const imageInputRef = useRef<HTMLInputElement>(null);
+	const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+	const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files) {
+			const imagesArray = Array.from(e.target.files);
+			const newImageUrls = imagesArray.map((image) =>
+				URL.createObjectURL(image)
+			);
+
+			setSelectedImages([...selectedImages, ...newImageUrls]);
+		}
+	};
 
 	const form = useForm<z.infer<typeof newProductSchema>>({
 		resolver: zodResolver(newProductSchema),
 		defaultValues: {
-			category: "",
-			productName: "Product name",
+			category: undefined,
+			productName: "",
 			delivery: "",
 			description: "",
 			price: "",
@@ -27,10 +43,30 @@ export default function NewProductPage() {
 		},
 	});
 
-	async function onSubmit(values: z.infer<typeof newProductSchema>) {
-		console.log(values);
-		startTransition(() => {
-			createProduct(values).then((data) => {
+	function onSubmit(values: z.infer<typeof newProductSchema>) {
+		startTransition(async () => {
+			if (!selectedImages) {
+				return;
+			}
+
+			const urls: string[] = [];
+			for (const url of selectedImages || []) {
+				const imageFile = await convertBlobUrlToImage(url);
+
+				const { imageUrl, error } = await uploadImage({
+					file: imageFile,
+					bucket: "pictures",
+				});
+
+				if (error) {
+					console.error("Error uploading image:", error);
+					return;
+				}
+
+				urls.push(imageUrl);
+			}
+
+			createProduct(values, urls).then((data) => {
 				if (data?.error) {
 					form.reset();
 				}
@@ -38,6 +74,8 @@ export default function NewProductPage() {
 					form.reset();
 				}
 			});
+
+			setSelectedImages([]);
 		});
 	}
 
@@ -46,10 +84,18 @@ export default function NewProductPage() {
 			<form onSubmit={form.handleSubmit(onSubmit)}>
 				<div className="max-w-7xl mx-auto px-4 md:px-8">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-						{/* Product Images - Always square with aspect ratio enforced */}
 						<div className="space-y-4">
-							<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-								<div className="w-full h-full object-cover" />
+							<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+								{selectedImages.length > 0 ? (
+									<Image
+										src={selectedImages[0]}
+										alt="Selected Image"
+										fill
+										className="w-full h-full object-cover"
+									/>
+								) : (
+									<div className="w-full h-full object-cover" />
+								)}
 							</div>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="w-full aspect-square bg-gray-100 overflow-hidden">
@@ -57,18 +103,27 @@ export default function NewProductPage() {
 								</div>
 								<div className="w-full aspect-square bg-gray-100 overflow-hidden">
 									<div className="flex justify-center items-center w-full h-full object-cover">
-										<div className="bg-white p-4 rounded-full hover:bg-gray-100 cursor-pointer transition duration-500 group">
-											<Plus
-												size={48}
-												className="transition-transform duration-300 group-hover:scale-110"
+										<label className="bg-white p-4 hover:bg-gray-100 cursor-pointer transition duration-500 group flex items-center justify-center">
+											<input
+												ref={imageInputRef}
+												type="file"
+												multiple
+												accept="image/*"
+												className="hidden"
+												onChange={handleImageChange}
 											/>
-										</div>
+											<button onClick={() => imageInputRef.current?.click()} type="button">
+												<Plus
+													size={48}
+													className="transition-transform duration-300 group-hover:scale-110"
+												/>
+											</button>
+										</label>
 									</div>
 								</div>
 							</div>
 						</div>
 
-						{/* Product Details */}
 						<div className="flex flex-col">
 							<FormField
 								control={form.control}
@@ -85,12 +140,12 @@ export default function NewProductPage() {
 								)}
 							/>
 
-							{/* Editable product name */}
 							<FormField
 								control={form.control}
 								name="productName"
 								render={({ field }) => (
 									<input
+										placeholder="Product Name"
 										{...field}
 										className="font-semibold text-xl py-2 mb-4 border-b border-gray-200 focus:outline-none focus:border-gray-300"
 									/>
@@ -104,10 +159,21 @@ export default function NewProductPage() {
 										control={form.control}
 										name="price"
 										render={({ field }) => (
-											<input
-												{...field}
-												className="text-primary text-xl font-bold py-2 border-b border-gray-200 focus:outline-none focus:border-gray-300 w-full"
-											/>
+											<div className="flex">
+												<input
+													{...field}
+													className={`text-primary text-xl font-bold py-2 border-b focus:outline-none w-full ${
+														form.formState.errors.price
+															? "border-red-500 focus:border-red-500"
+															: "border-gray-200 focus:border-gray-300"
+													}`}
+												/>
+												{form.formState.errors.price && (
+													<div className="text-red-500 text-sm ml-1">
+														{form.formState.errors.price.message?.toString()}
+													</div>
+												)}
+											</div>
 										)}
 									/>
 									<span>€</span>

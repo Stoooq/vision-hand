@@ -5,9 +5,11 @@ import { Menubar } from "./menubar";
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import { useSidebar } from "@/hooks/useSidebar";
 
 export function Navbar() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const { open } = useSidebar("cart");
 
 	const handleMenuToggle = () => {
 		setIsMenuOpen(!isMenuOpen);
@@ -15,7 +17,7 @@ export function Navbar() {
 
 	return (
 		<div className="min-h-[56px] bg-[#f8f8f8]">
-			<motion.nav className="fixed top-0 w-full bg-white py-4 px-6 z-50 border-b-1 border-zinc-200">
+			<motion.nav className="fixed top-0 w-full bg-white py-4 px-6 z-100 border-b-1 border-zinc-200">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center z-10">
 						<Menubar isMenuOpen={isMenuOpen} onToggle={handleMenuToggle} />
@@ -32,7 +34,10 @@ export function Navbar() {
 							<Search size={22} />
 						</button>
 
-						<button className="focus:outline-none relative">
+						<button
+							className="focus:outline-none relative cursor-pointer"
+							onClick={open}
+						>
 							<ShoppingBag size={22} />
 							<span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
 								0
@@ -57,10 +62,14 @@ export function Navbar() {
 						>
 							<div className="flex justify-center p-8">
 								<div className="py-4 px-8 hover:bg-gray-100">
-									<Link href="/products" onClick={() => handleMenuToggle()}>Products</Link>
+									<Link href="/products" onClick={() => handleMenuToggle()}>
+										Products
+									</Link>
 								</div>
 								<div className="py-4 px-8 hover:bg-gray-100">
-									<Link href="/new-product" onClick={() => handleMenuToggle()}>Add Product</Link>
+									<Link href="/new-product" onClick={() => handleMenuToggle()}>
+										Add Product
+									</Link>
 								</div>
 								<div className="py-4 px-8 hover:bg-gray-100">
 									<a href="/portfolio" className="text-gray-800 text-lg">
