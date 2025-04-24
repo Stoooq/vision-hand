@@ -6,13 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { newProductSchema } from "@/schemas";
 import { Form, FormField } from "@/components/ui/form";
 import DropdownMenu from "@/components/dropdown-menu";
-import { Plus } from "lucide-react";
 import { ChangeEvent, useRef, useState, useTransition } from "react";
 import { createProduct } from "@/actions/create-product";
 import { Categories } from "@/lib/const";
-import Image from "next/image";
 import { convertBlobUrlToImage } from "@/lib/utils";
 import { uploadImage } from "@/db/supabase/storage/client";
+import ImageCarousel from "@/components/image-carousel";
 
 export default function NewProductPage() {
 	const [isPending, startTransition] = useTransition();
@@ -29,6 +28,14 @@ export default function NewProductPage() {
 			setSelectedImages([...selectedImages, ...newImageUrls]);
 		}
 	};
+
+	const handleDeleteImage = (urlToDelete: string) => {
+		setSelectedImages((prevImages) =>
+            prevImages.filter((url) => url !== urlToDelete)
+        );
+
+        URL.revokeObjectURL(urlToDelete);
+	}
 
 	const form = useForm<z.infer<typeof newProductSchema>>({
 		resolver: zodResolver(newProductSchema),
@@ -84,45 +91,7 @@ export default function NewProductPage() {
 			<form onSubmit={form.handleSubmit(onSubmit)}>
 				<div className="max-w-7xl mx-auto px-4 md:px-8">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-						<div className="space-y-4">
-							<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
-								{selectedImages.length > 0 ? (
-									<Image
-										src={selectedImages[0]}
-										alt="Selected Image"
-										fill
-										className="w-full h-full object-cover"
-									/>
-								) : (
-									<div className="w-full h-full object-cover" />
-								)}
-							</div>
-							<div className="grid grid-cols-2 gap-4">
-								<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-									<div className="w-full h-full object-cover" />
-								</div>
-								<div className="w-full aspect-square bg-gray-100 overflow-hidden">
-									<div className="flex justify-center items-center w-full h-full object-cover">
-										<label className="bg-white p-4 hover:bg-gray-100 cursor-pointer transition duration-500 group flex items-center justify-center">
-											<input
-												ref={imageInputRef}
-												type="file"
-												multiple
-												accept="image/*"
-												className="hidden"
-												onChange={handleImageChange}
-											/>
-											<button onClick={() => imageInputRef.current?.click()} type="button">
-												<Plus
-													size={48}
-													className="transition-transform duration-300 group-hover:scale-110"
-												/>
-											</button>
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
+						<ImageCarousel urls={selectedImages} variant="delete" onDelete={handleDeleteImage} />
 
 						<div className="flex flex-col">
 							<FormField
@@ -233,13 +202,32 @@ export default function NewProductPage() {
 								)}
 							/>
 
-							<button
-								disabled={isPending}
-								type="submit"
-								className="w-full mt-4 py-3 px-6 bg-black text-white font-medium cursor-pointer"
-							>
-								Add Product
-							</button>
+							<div className="flex gap-4">
+								<div className="w-full">
+									<input
+										ref={imageInputRef}
+										type="file"
+										multiple
+										accept="image/*"
+										className="hidden"
+										onChange={handleImageChange}
+									/>
+									<button
+										type="button"
+										className="w-full mt-4 py-3 px-6 border-2 border-black font-medium cursor-pointer"
+										onClick={() => imageInputRef.current?.click()}
+									>
+										Add Images
+									</button>
+								</div>
+								<button
+									disabled={isPending}
+									type="submit"
+									className="w-full mt-4 py-3 px-6 bg-black text-white font-medium cursor-pointer"
+								>
+									Add Product
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
