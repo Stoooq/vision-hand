@@ -4,15 +4,23 @@ import { deleteProduct } from "@/actions/delete-product";
 import DropdownText from "@/components/dropdown-text";
 import { ImageSchema } from "@/db/schema/image";
 import { ProductSelectSchema } from "@/db/schema/product";
+import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { RefObject, useRef, useState, useTransition } from "react";
+import { useOnClickOutside } from "usehooks-ts";
 
 export default function ProductPage({
 	product,
 }: {
 	product: ProductSelectSchema & { image: ImageSchema[] };
 }) {
+	const [isMoreImagesShown, setIsMoreImagesShown] = useState(false);
+	const ref = useRef<HTMLDivElement>(null);
+	useOnClickOutside(ref as RefObject<HTMLDivElement>, () =>
+		setIsMoreImagesShown(false)
+	);
+
 	const router = useRouter();
 
 	const [isEditPending, startEditTransition] = useTransition();
@@ -32,12 +40,55 @@ export default function ProductPage({
 		});
 	};
 
+	const handleShowMoreImages = () => {
+		setIsMoreImagesShown((prev) => !prev);
+	};
+
 	return (
 		<>
 			<div className="max-w-7xl mx-auto px-4 md:px-8">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+					<AnimatePresence>
+						{isMoreImagesShown && (
+							<motion.div
+								className="absolute flex justify-center items-center inset-0 z-100"
+								initial={{ background: "rgba(0, 0, 0, 0)" }}
+								animate={{ background: "rgba(0, 0, 0, 0.4)" }}
+								exit={{ background: "rgba(0, 0, 0, 0)" }}
+								transition={{ delay: 0.2 }}
+							>
+								<motion.div
+									className="flex gap-4 p-4"
+									ref={ref}
+									initial={{ background: "rgba(255, 255, 255, 0)" }}
+									animate={{ background: "rgba(255, 255, 255, 1)" }}
+									exit={{ background: "rgba(255, 255, 255, 0)" }}
+									transition={{ duration: 0.2 }}
+								>
+									{product.image.map((img) => (
+										<motion.div
+											key={img.imageUrl}
+											className="relative w-64 h-64 mb-4"
+											layoutId={`image-${img.imageUrl}`}
+											transition={{ duration: 0.3 }}
+										>
+											<Image
+												src={img.imageUrl}
+												alt="Selected Image"
+												fill
+												className="w-full h-full object-cover"
+											/>
+										</motion.div>
+									))}
+								</motion.div>
+							</motion.div>
+						)}
+					</AnimatePresence>
 					<div className="space-y-4">
-						<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+						<motion.div
+							className="relative w-full aspect-square bg-gray-100 overflow-hidden"
+							layoutId={`image-${product.image[0].imageUrl}`}
+						>
 							{product.image ? (
 								<Image
 									src={product.image[0].imageUrl}
@@ -48,12 +99,15 @@ export default function ProductPage({
 							) : (
 								<div className="w-full h-full object-cover" />
 							)}
-						</div>
+						</motion.div>
 						<div className="grid grid-cols-2 gap-4">
-							<div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
+							<motion.div
+								className="relative w-full aspect-square bg-gray-100 overflow-hidden"
+								layoutId={`image-${product.image[1].imageUrl}`}
+							>
 								{product.image ? (
 									<Image
-										src={product.image[0].imageUrl}
+										src={product.image[1].imageUrl}
 										alt="Selected Image"
 										fill
 										className="w-full h-full object-cover"
@@ -61,15 +115,21 @@ export default function ProductPage({
 								) : (
 									<div className="w-full h-full object-cover" />
 								)}
-							</div>
+							</motion.div>
 							<div className="relative">
-								<button className="absolute bg-white p-2 border-2 border-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer">
+								<button
+									className="absolute bg-white p-2 border-2 border-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+									onClick={handleShowMoreImages}
+								>
 									Show more
 								</button>
-								<div className="relative w-full aspect-square bg-gray-100 overflow-hidden blur-md">
+								<motion.div
+									className="relative w-full aspect-square bg-gray-100 overflow-hidden blur-md"
+									layoutId={`image-${product.image[2].imageUrl}`}
+								>
 									{product.image ? (
 										<Image
-											src={product.image[0].imageUrl}
+											src={product.image[2].imageUrl}
 											alt="Selected Image"
 											fill
 											className="w-full h-full object-cover"
@@ -77,7 +137,7 @@ export default function ProductPage({
 									) : (
 										<div className="w-full h-full object-cover" />
 									)}
-								</div>
+								</motion.div>
 							</div>
 						</div>
 					</div>
