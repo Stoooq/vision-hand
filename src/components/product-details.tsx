@@ -2,8 +2,8 @@
 
 import { deleteProduct } from "@/actions/delete-product";
 import DropdownText from "@/components/dropdown-text";
-import { ImageSchema } from "@/db/schema/image";
-import { ProductSelectSchema } from "@/db/schema/product";
+import { ImageSelectType } from "@/db/schema/image";
+import { ProductSelectType } from "@/db/schema/product";
 import { useRouter } from "next/navigation";
 import { RefObject, useRef, useState, useTransition } from "react";
 import ImageCarousel from "./image-carousel";
@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from "motion/react";
 export default function ProductPage({
 	product,
 }: {
-	product: ProductSelectSchema & { image: ImageSchema[] };
+	product: ProductSelectType & { image: ImageSelectType[] };
 }) {
 	const router = useRouter();
 	const ref = useRef<HTMLDivElement>(null);

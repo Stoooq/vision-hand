@@ -2,24 +2,26 @@
 
 import { db } from "@/db";
 import { image, product } from "@/db/schema";
-import { newProductSchema } from "@/schemas";
+import { productInsertSchema } from "@/db/schema/product";
 import { z } from "zod";
 
 export const createProduct = async (
-	values: z.infer<typeof newProductSchema>,
+	values: z.infer<typeof productInsertSchema>,
 	urls: string[]
 ) => {
-	const validation = newProductSchema.safeParse(values);
+	const validation = productInsertSchema.safeParse(values);
 
 	if (!validation.success) return { error: "Invalid fields" };
 
 	const [newProduct] = await db
 		.insert(product)
 		.values({
+			userId: 1,
+			category: values.category,
 			productName: values.productName,
 			delivery: values.delivery,
 			description: values.description,
-			price: Number(values.price),
+			price: values.price,
 			dimensions: values.dimensions,
 			material: values.material,
 		})

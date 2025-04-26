@@ -1,7 +1,7 @@
 import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { product } from "./product";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const image = pgTable("image", {
@@ -17,5 +17,8 @@ export const imageRelations = relations(image, ({ one }) => ({
     }),
 }));
 
-const imageInsertSchema = createInsertSchema(image);
-export type ImageSchema = z.infer<typeof imageInsertSchema>;
+export const imageInsertSchema = createInsertSchema(image);
+export type ImageInsertType = z.infer<typeof imageInsertSchema>;
+
+export const imageSelectSchema = createSelectSchema(image);
+export type ImageSelectType = z.infer<typeof imageSelectSchema>;

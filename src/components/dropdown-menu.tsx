@@ -1,17 +1,17 @@
 "use client";
 
-import { newProductSchema } from "@/schemas";
+import { productInsertSchema } from "@/db/schema/product";
 import { ChevronDown, ChevronLeft } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { ControllerRenderProps, FieldPath } from "react-hook-form";
+import { ControllerRenderProps, FieldError, FieldPath } from "react-hook-form";
 import { z } from "zod";
 
 type SubcategoryMap = {
 	[category: string]: string[];
 };
 
-type NewProductForm = z.infer<typeof newProductSchema>;
+type NewProductForm = z.infer<typeof productInsertSchema>;
 
 type MenuItems = string[] | SubcategoryMap;
 
@@ -20,11 +20,13 @@ export default function DropdownMenu({
 	items,
 	variant,
 	field,
+	error,
 }: {
 	title: string;
 	items: MenuItems | null;
 	variant: "nested" | "input";
 	field?: ControllerRenderProps<NewProductForm, FieldPath<NewProductForm>>;
+	error: FieldError | undefined;
 }) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -53,7 +55,6 @@ export default function DropdownMenu({
 
 	const handleBackToCategories = () => {
 		setShowSubcategories(false);
-		// Opóźniamy wyczyszczenie wybranej kategorii do momentu zakończenia animacji
 		setTimeout(() => {
 			setSelectedCategory(null);
 		}, 300);
@@ -64,7 +65,9 @@ export default function DropdownMenu({
 			<div className="relative bg-white overflow-hidden">
 				<button
 					type="button"
-					className="flex justify-between gap-2 text-xl py-2 cursor-pointer w-full relative z-20 border-b border-gray-200 focus:outline-none"
+					className={`flex justify-between gap-2 text-xl py-2 cursor-pointer w-full relative z-20 border-b border-gray-200 focus:outline-none ${
+						error ? "border-red-500" : ""
+					}`}
 					onClick={() => setIsMenuOpen(!isMenuOpen)}
 				>
 					<div>{selectedSubcategory ? selectedSubcategory : title}</div>
@@ -77,7 +80,7 @@ export default function DropdownMenu({
 					<div
 						className={`absolute bg-black h-[1px] bottom-0 transition-[width] duration-300 ${
 							isMenuOpen ? "w-full" : "w-0"
-						}`}
+						} ${error && "hidden"}`}
 					/>
 				</button>
 			</div>

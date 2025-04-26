@@ -1,6 +1,5 @@
-// export { user } from "./user";
-export { product, productRelations } from "./product";
-// export { category } from "./category";
+export { user, userRelations, roleEnum } from "./user";
+export { product, productRelations, categoryEnum } from "./product";
 export { image, imageRelations } from "./image";
-// export { cart } from "./cart";
-// export { cartItem } from "./cartItem";
+export { cart, cartRelations } from "./cart";
+export { cartItem, cartItemRelations } from "./cartItem";
