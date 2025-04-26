@@ -27,3 +27,8 @@ export const newProductSchema = z.object({
 	dimensions: z.string(),
 	material: z.string(),
 });
+
+export const loginSchema = z.object({
+	email: z.string().email("Invalid email"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
+})

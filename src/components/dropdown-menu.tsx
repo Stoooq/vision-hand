@@ -161,6 +161,7 @@ export default function DropdownMenu({
 							<>
 								<textarea
 									{...field}
+									value={field!.value as string}
 									placeholder="Enter a description in this field"
 									className="w-full h-[120px] border border-gray-200 p-2 focus:outline-none focus:border-gray-300 border-t-0 resize-none"
 								/>

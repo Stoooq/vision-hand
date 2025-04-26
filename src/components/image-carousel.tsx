@@ -62,7 +62,7 @@ export default function ImageCarousel({
 											<motion.div
 												className="relative w-64 h-64"
 												layoutId={`image-${url}`}
-												transition={{ duration: 0.3 }}
+												transition={{ duration: 0.3, delay: 0.05 * index }}
 												whileHover={{
 													scale: 1.05,
 													transition: { duration: 0.1 },
@@ -170,10 +170,16 @@ export default function ImageCarousel({
 					<div className="relative">
 						<motion.button
 							type="button"
-							className="absolute bg-white p-2 border-2 border-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+							className="absolute bg-white p-2 border-1 border-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
 							onClick={handleShowMoreImages}
-							animate={{ opacity: urls.length < 1 ? 0 : 1 }}
-							transition={{ duration: 0.2 }}
+							initial={{ opacity: urls.length < 1 ? 0 : 1 }}
+							animate={{
+								opacity: (isMoreImagesShown || urls.length < 0) ? 0 : 1,
+								transition: {
+									duration: 0.2,
+									delay: isMoreImagesShown ? 0 : 0.3,
+								},
+							}}
 						>
 							Show more
 						</motion.button>

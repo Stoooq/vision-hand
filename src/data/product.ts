@@ -16,6 +16,20 @@ export const getAllProducts = async () => {
 	}
 };
 
+export const getAllProductsByUserId = async (userId: string) => {
+	try {
+		const products = await db.query.product.findMany({
+			where: (product, { eq }) => eq(product.userId, userId),
+			with: {
+				image: true,
+			},
+		});
+		return products;
+	} catch {
+		return null;
+	}
+};
+
 export const getProductById = async (id: string) => {
 	try {
 		const productId = parseInt(id, 10);

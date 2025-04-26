@@ -10,6 +10,7 @@ import ImageCarousel from "./image-carousel";
 import { toast } from "sonner";
 import { useOnClickOutside } from "usehooks-ts";
 import { AnimatePresence, motion } from "motion/react";
+import { Button } from "./button";
 
 export default function ProductPage({
 	product,
@@ -60,9 +61,14 @@ export default function ProductPage({
 					<ImageCarousel urls={urls} variant="show" />
 
 					<div className="flex flex-col">
-						<div className="flex items-center justify-between mb-4">
-							<div className="font-semibold text-4xl py-2 mb-4">
-								{product.productName}
+						<div className="flex justify-between mb-4">
+							<div className="pb-2">
+								<div className="text-muted-foreground">
+									{product.category.toUpperCase()}
+								</div>
+								<div className="font-semibold text-4xl">
+									{product.productName}
+								</div>
 							</div>
 							<div className="flex gap-4">
 								<div className="relative group">
@@ -73,7 +79,7 @@ export default function ProductPage({
 									>
 										Edit
 									</button>
-									<div className="absolute w-0 bg-black h-[1px] bottom-0 transition-[width] duration-200 group-hover:w-full" />
+									<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
 								</div>
 
 								<div className="relative group">
@@ -84,7 +90,7 @@ export default function ProductPage({
 									>
 										Delete
 									</button>
-									<div className="absolute w-0 bg-black h-[1px] bottom-0 transition-[width] duration-200 group-hover:w-full" />
+									<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
 								</div>
 								<AnimatePresence>
 									{isDialogOpen && (
@@ -100,21 +106,19 @@ export default function ProductPage({
 												animate={{ opacity: 1, scale: 1 }}
 												exit={{ opacity: 0, scale: 0.9 }}
 												transition={{ duration: 0.1 }}
-												className="bg-white p-4"
+												className="bg-white p-8"
 												ref={ref}
 											>
 												<div className="text-3xl">
 													Are you sure you want to delete this product?
 												</div>
 												<div className="text-muted-foreground mb-2">
-													This product will be deleted from your profile
+													This product will be deleted permanently and cannot be
+													recovered.
 												</div>
-												<button
-													className="p-4 border-2 border-black w-full cursor-pointer"
-													onClick={() => handleDelete(product.id)}
-												>
+												<Button onClick={() => handleDelete(product.id)}>
 													Confirm
-												</button>
+												</Button>
 											</motion.div>
 										</motion.div>
 									)}
@@ -142,12 +146,8 @@ export default function ProductPage({
 						</div>
 
 						<div className="flex w-full gap-8 items-center mb-4">
-							<button className="p-4 border-2 border-black w-full cursor-pointer">
-								Add to cart
-							</button>
-							<button className="p-4 w-full text-white bg-black cursor-pointer">
-								Buy now
-							</button>
+							<Button variant="outline">Add to cart</Button>
+							<Button>Buy now</Button>
 						</div>
 
 						<DropdownText title={"Dimensions"} text={product.dimensions} />

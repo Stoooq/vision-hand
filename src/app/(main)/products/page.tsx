@@ -10,14 +10,26 @@ export default async function ProductsPage() {
 
 	return (
 		<>
-			<div className="w-full bg-[#f8f8f8] py-8">
+			<div className="w-full bg-[#f8f8f8] pb-8">
+				<Image
+					src="/Handmade.jpg"
+					width={0}
+					height={0}
+					sizes="100vw"
+					className="w-full h-auto max-h-96 object-cover mb-8"
+					alt="handmade image"
+				/>
+
 				<div className="max-w-6xl mx-auto">
 					<div className="flex relative items-center">
 						<div className="w-full">
-							<input
-								placeholder="Search Products"
-								className="w-full h-9 bg-white px-3 py-1 rounded-md focus:ring-0 focus:outline-2 focus:outline-zinc-200"
-							/>
+							<div className="relative group">
+								<input
+									placeholder="Search Products"
+									className="w-full p-2 cursor-pointer border-b border-gray-200 focus:outline-none"
+								/>
+								<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-500 group-hover:w-full" />
+							</div>
 						</div>
 						<button className="flex h-full px-2 justify-center items-center absolute right-0 cursor-pointer text-slate-500 hover:text-slate-900">
 							<Search size={18} className="transition-colors duration-300" />
@@ -49,7 +61,7 @@ export default async function ProductsPage() {
 							<Link
 								href={`/products/${product.id}`}
 								key={product.id}
-								className="flex flex-col bg-gray-100 overflow-hidden"
+								className="flex flex-col overflow-hidden"
 							>
 								<Image
 									src={product.image[0].imageUrl}
@@ -58,7 +70,7 @@ export default async function ProductsPage() {
 									height={200}
 									className="w-full h-full aspect-square object-contain"
 								/>
-								<div className="p-2">
+								<div className="p-2 border-1 border-gray-200 bg-white">
 									<div className="font-semibold">{product.productName}</div>
 									<div className="flex gap-4 text-muted-foreground">
 										<div>Price: {product.price} €</div>

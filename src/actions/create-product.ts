@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { image, product } from "@/db/schema";
 import { productInsertSchema } from "@/db/schema/product";
+import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
 
 export const createProduct = async (
@@ -10,13 +11,19 @@ export const createProduct = async (
 	urls: string[]
 ) => {
 	const validation = productInsertSchema.safeParse(values);
-
 	if (!validation.success) return { error: "Invalid fields" };
+
+	const supabase = await createClient();
+	const { data: { session }, error } = await supabase.auth.getSession();
+
+	if (error || !session?.user) {
+		return { error: "Unauthorized or session error" };
+	}
 
 	const [newProduct] = await db
 		.insert(product)
 		.values({
-			userId: 1,
+			userId: session.user.id,
 			category: values.category,
 			productName: values.productName,
 			delivery: values.delivery,

@@ -8,52 +8,18 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-// import { user } from "./user";
-// import { category } from "./category";
 import { image } from "./image";
-// import { cartItem } from "./cartItem";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { AllCategories } from "@/lib/const";
 import { user } from "./user";
 import { cartItem } from "./cartItem";
 
-// export const product = pgTable("product", {
-//     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-//     productName: varchar("product_name", { length: 255 }).notNull(),
-//     delivery: varchar("delivery", { length: 255 }).notNull(),
-//     description: varchar("description", { length: 255 }).notNull(),
-//     price: integer("price").notNull(),
-//     dimensions: varchar("dimensions", { length: 255 }).notNull(),
-//     material: varchar("material", { length: 255 }).notNull(),
-//     createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
-//     updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
-//     userId: integer("user_id")
-//         .notNull()
-//         .references(() => user.id, { onDelete: "cascade" }),
-//     categoryId: integer("category_id")
-//         .notNull()
-//         .references(() => category.id, { onDelete: "set null" }),
-// });
-
-// export const productRelations = relations(product, ({ one, many }) => ({
-//     user: one(user, {
-//         fields: [product.userId],
-//         references: [user.id],
-//     }),
-//     category: one(category, {
-//         fields: [product.categoryId],
-//         references: [category.id],
-//     }),
-//     images: many(image),
-//     cartItems: many(cartItem),
-// }));
-
 export const categoryEnum = pgEnum("category_enum", AllCategories);
 
 export const product = pgTable("product", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	userId: uuid("user_id").notNull(),
+	userId: uuid("user_id"),
 	category: categoryEnum().notNull(),
 	productName: varchar("product_name", { length: 255 }).notNull(),
 	delivery: varchar("delivery", { length: 255 }).notNull(),

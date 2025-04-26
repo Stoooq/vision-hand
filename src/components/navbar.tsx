@@ -17,7 +17,7 @@ export function Navbar() {
 
 	return (
 		<div className="min-h-[56px] bg-[#f8f8f8]">
-			<motion.nav className="fixed top-0 w-full bg-white py-4 px-6 z-100 border-b-1 border-zinc-200">
+			<motion.nav className="fixed top-0 w-full bg-white py-4 px-6 z-100 border-b-1 border-black">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center z-10">
 						<Menubar isMenuOpen={isMenuOpen} onToggle={handleMenuToggle} />

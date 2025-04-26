@@ -13,6 +13,7 @@ import { uploadImage } from "@/utils/supabase/storage/client";
 import ImageCarousel from "@/components/image-carousel";
 import { toast } from "sonner";
 import { productInsertSchema } from "@/db/schema/product";
+import { Button } from "@/components/button";
 
 export default function NewProductPage() {
 	const [isPending, startTransition] = useTransition();
@@ -153,7 +154,7 @@ export default function NewProductPage() {
 
 							<div className="flex flex-col sm:flex-row gap-8 w-full mb-4 text-muted-foreground">
 								<div
-									className={`flex flex-1 items-center border-b ${
+									className={`flex flex-1 items-center text-xl border-b ${
 										form.formState.errors.price
 											? "border-red-500"
 											: "border-gray-200"
@@ -168,14 +169,14 @@ export default function NewProductPage() {
 												type="number"
 												step="0.01"
 												{...field}
-												className="text-primary text-xl font-bold focus:outline-none w-full bg-transparent py-2"
+												className="text-primary text-xl focus:outline-none w-full bg-transparent py-2"
 											/>
 										)}
 									/>
 									<span className="ml-1">€</span>
 								</div>
 								<div
-									className={`flex flex-1 items-center border-b ${
+									className={`flex flex-1 items-center text-xl border-b ${
 										form.formState.errors.delivery
 											? "border-red-500"
 											: "border-gray-200"
@@ -190,7 +191,7 @@ export default function NewProductPage() {
 												type="number"
 												step="1"
 												{...field}
-												className="text-primary text-xl font-bold focus:outline-none w-full bg-transparent"
+												className="text-primary text-xl focus:outline-none w-full bg-transparent"
 											/>
 										)}
 									/>
@@ -250,21 +251,17 @@ export default function NewProductPage() {
 										className="hidden"
 										onChange={handleImageChange}
 									/>
-									<button
-										type="button"
-										className="w-full mt-4 py-3 px-6 border-2 border-black font-medium cursor-pointer"
+									<Button
+										disabled={isPending}
+										variant="outline"
 										onClick={() => imageInputRef.current?.click()}
 									>
 										Add Images
-									</button>
+									</Button>
 								</div>
-								<button
-									disabled={isPending}
-									type="submit"
-									className="w-full mt-4 py-3 px-6 bg-black text-white font-medium cursor-pointer"
-								>
+								<Button type="submit" disabled={isPending}>
 									Add Product
-								</button>
+								</Button>
 							</div>
 						</div>
 					</div>

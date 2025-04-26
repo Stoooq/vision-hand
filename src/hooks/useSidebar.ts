@@ -1,19 +1,34 @@
-import { useRouter, useSearchParams } from "next/navigation";
+import EventEmitter from "events";
+import { useEffect, useState } from "react";
+
+const events = new EventEmitter();
 
 export const useSidebar = (type: string) => {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const isOpen = searchParams.get(type) === "1";
+	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		const onOpen = (receivedType: string) => {
+			if (receivedType !== type) return;
+			setIsOpen(true);
+		};
+		events.on("open", onOpen);
+		const onClose = (receivedType: string) => {
+			if (receivedType !== type) return;
+			setIsOpen(false);
+		};
+		events.on("close", onClose);
+
+		return () => {
+			events.off("open", onOpen);
+			events.off("close", onClose);
+		};
+	}, []);
 
 	const open = () => {
-		const params = new URLSearchParams(searchParams.toString());
-		params.set(type, "1");
-		router.replace(`?${params.toString()}`);
+		events.emit("open", type);
 	};
 	const close = () => {
-		const params = new URLSearchParams(searchParams.toString());
-		params.delete(type);
-		router.replace(`?${params.toString()}`);
+		events.emit("close", type);
 	};
 
 	return {
