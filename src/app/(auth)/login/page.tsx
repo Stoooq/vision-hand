@@ -7,6 +7,7 @@ import { Form, FormField } from "@/components/ui/form";
 import { useTransition } from "react";
 import { loginSchema } from "@/schemas";
 import { Button } from "@/components/button";
+import { login } from "@/actions/login";
 
 export default function NewProductPage() {
 	const [isPending, startTransition] = useTransition();
@@ -21,7 +22,9 @@ export default function NewProductPage() {
 
 	function onSubmit(values: z.infer<typeof loginSchema>) {
 		console.log(values);
-		startTransition(async () => {});
+		startTransition(async () => {
+			await login(values);
+		});
 	}
 
 	return (

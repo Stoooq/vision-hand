@@ -1,20 +1,21 @@
 import ProductDetails from "@/components/product-details";
-import { getProductById } from "@/data/product";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function ProductPage({
 	params,
 }: {
 	params: Promise<{ id: string }>;
 }) {
-	const productId = (await params).id;
+	const productId = parseInt((await params).id, 10)
 
-	const product = await getProductById(productId);
-
-	if (!product) return "Product not found";
+	const supabase = await createClient();
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
 
 	return (
 		<>
-			<ProductDetails product={product} />
+			<ProductDetails productId={productId} user={user} />
 		</>
 	);
 }

@@ -30,11 +30,10 @@ export const getAllProductsByUserId = async (userId: string) => {
 	}
 };
 
-export const getProductById = async (id: string) => {
+export const getProductById = async (id: number) => {
 	try {
-		const productId = parseInt(id, 10);
 		const product = await db.query.product.findFirst({
-			where: (product, { eq }) => eq(product.id, productId),
+			where: (product, { eq }) => eq(product.id, id),
 			with: {
 				image: true,
 			},

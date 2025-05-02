@@ -2,8 +2,6 @@
 
 import { deleteProduct } from "@/actions/delete-product";
 import DropdownText from "@/components/dropdown-text";
-import { ImageSelectType } from "@/db/schema/image";
-import { ProductSelectType } from "@/db/schema/product";
 import { useRouter } from "next/navigation";
 import { RefObject, useRef, useState, useTransition } from "react";
 import ImageCarousel from "./image-carousel";
@@ -11,12 +9,30 @@ import { toast } from "sonner";
 import { useOnClickOutside } from "usehooks-ts";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "./button";
+import { useQuery } from "@tanstack/react-query";
+import { getAllProducts } from "@/actions/product";
+import { User } from "@supabase/supabase-js";
+import Loading from "@/app/(main)/products/_components/Loading";
 
 export default function ProductPage({
-	product,
+	productId,
+	user,
 }: {
-	product: ProductSelectType & { image: ImageSelectType[] };
+	productId: number;
+	user: User | null;
 }) {
+	const {
+		data: product,
+		isPending,
+		isError,
+	} = useQuery({
+		queryKey: ["products"],
+		queryFn: getAllProducts,
+		select: (allProducts) => {
+			return allProducts?.find((product) => product.id === productId);
+		},
+	});
+
 	const router = useRouter();
 	const ref = useRef<HTMLDivElement>(null);
 	useOnClickOutside(ref as RefObject<HTMLDivElement>, () =>
@@ -52,6 +68,22 @@ export default function ProductPage({
 		});
 	};
 
+	if (isPending) {
+		return <Loading />;
+	}
+
+	if (isError) {
+		return <div>Error loading product data. Please try again later.</div>;
+	}
+
+	if (!product) {
+		return <div>Product not found.</div>;
+	}
+
+	const canEdit = user
+		? user.id === product.userId || user.user_metadata?.role === "admin"
+		: false;
+
 	const urls = product.image.map((img) => img.imageUrl);
 
 	return (
@@ -70,75 +102,75 @@ export default function ProductPage({
 									{product.productName}
 								</div>
 							</div>
-							<div className="flex gap-4">
-								<div className="relative group">
-									<button
-										className="p-2 cursor-pointer border-b border-gray-200"
-										onClick={handleEdit}
-										disabled={isEditPending}
-									>
-										Edit
-									</button>
-									<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
-								</div>
-
-								<div className="relative group">
-									<button
-										className="p-2 cursor-pointer border-b border-gray-200"
-										onClick={() => setIsDialogOpen(true)}
-										disabled={isDeletePending}
-									>
-										Delete
-									</button>
-									<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
-								</div>
-								<AnimatePresence>
-									{isDialogOpen && (
-										<motion.div
-											initial={{ background: "rgba(0, 0, 0, 0)" }}
-											animate={{ background: "rgba(0, 0, 0, 0.4)" }}
-											exit={{ background: "rgba(0, 0, 0, 0)" }}
-											transition={{ duration: 0.1 }}
-											className="absolute flex justify-center items-center inset-0 z-100"
+							{canEdit && (
+								<div className="flex gap-4">
+									<div className="relative group">
+										<button
+											className="p-2 cursor-pointer border-b border-gray-200"
+											onClick={handleEdit}
+											disabled={isEditPending}
 										>
+											Edit
+										</button>
+										<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
+									</div>
+
+									<div className="relative group">
+										<button
+											className="p-2 cursor-pointer border-b border-gray-200"
+											onClick={() => setIsDialogOpen(true)}
+											disabled={isDeletePending}
+										>
+											Delete
+										</button>
+										<div className="absolute w-0 bg-black h-[1px] transition-[width] duration-200 group-hover:w-full" />
+									</div>
+									<AnimatePresence>
+										{isDialogOpen && (
 											<motion.div
-												initial={{ opacity: 0, scale: 0.9 }}
-												animate={{ opacity: 1, scale: 1 }}
-												exit={{ opacity: 0, scale: 0.9 }}
+												initial={{ background: "rgba(0, 0, 0, 0)" }}
+												animate={{ background: "rgba(0, 0, 0, 0.4)" }}
+												exit={{ background: "rgba(0, 0, 0, 0)" }}
 												transition={{ duration: 0.1 }}
-												className="bg-white p-8"
-												ref={ref}
+												className="absolute flex justify-center items-center inset-0 z-100"
 											>
-												<div className="text-3xl">
-													Are you sure you want to delete this product?
-												</div>
-												<div className="text-muted-foreground mb-2">
-													This product will be deleted permanently and cannot be
-													recovered.
-												</div>
-												<Button onClick={() => handleDelete(product.id)}>
-													Confirm
-												</Button>
+												<motion.div
+													initial={{ opacity: 0, scale: 0.9 }}
+													animate={{ opacity: 1, scale: 1 }}
+													exit={{ opacity: 0, scale: 0.9 }}
+													transition={{ duration: 0.1 }}
+													className="bg-white p-8"
+													ref={ref}
+												>
+													<div className="text-3xl">
+														Are you sure you want to delete this product?
+													</div>
+													<div className="text-muted-foreground mb-2">
+														This product will be deleted permanently and cannot
+														be recovered.
+													</div>
+													<Button onClick={() => handleDelete(product.id)}>
+														Confirm
+													</Button>
+												</motion.div>
 											</motion.div>
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</div>
+										)}
+									</AnimatePresence>
+								</div>
+							)}
 						</div>
 
-						<DropdownText title={"Description"} text={product.description} />
+							<DropdownText title={"Description"} text={product.description} />
 
-						<div className="flex w-full gap-24 items-center mb-4 text-muted-foreground">
+						<div className="flex w-full gap-24 items-center mb-4 text-xl">
 							<div className="flex items-center flex-1 gap-2">
 								<span>Price</span>
-								<span className="text-primary text-xl font-bold py-2">
-									{product.price}
-								</span>
+								<span className="text-xl font-bold py-2">{product.price}</span>
 								<span>€</span>
 							</div>
 							<div className="flex items-center flex-1 gap-2 justify-end">
 								<span>Delivery</span>
-								<span className="text-primary text-xl font-bold py-2">
+								<span className="text-xl font-bold py-2">
 									{product.delivery}
 								</span>
 								<span>days</span>

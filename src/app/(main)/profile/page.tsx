@@ -1,3 +1,4 @@
+import { SignOutButton } from "@/components/sign-out-button";
 import { getAllProductsByUserId } from "@/data/product";
 import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
@@ -20,12 +21,10 @@ export default async function ProfilePage() {
 		<>
 			<div className="w-full bg-[#f8f8f8] py-8">
 				<div className="max-w-6xl mx-auto">
-					<div className="mt-8 p-6 bg-zinc-100">
+					<div className="flex justify-between items-end mt-8">
 						<div className="w-[200px] h-[200px] bg-zinc-400 rounded-full" />
-					</div>
-					<div className="flex justify-between items-end mt-8 border-b-1 border-zinc-200">
 						<div className="text-6xl">{session.user.email}</div>
-						<div>Opinions: 4.7</div>
+						<SignOutButton />
 					</div>
 					<div className="text-3xl mt-8">Products</div>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mt-8">

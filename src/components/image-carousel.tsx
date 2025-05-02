@@ -174,7 +174,7 @@ export default function ImageCarousel({
 							onClick={handleShowMoreImages}
 							initial={{ opacity: urls.length < 1 ? 0 : 1 }}
 							animate={{
-								opacity: (isMoreImagesShown || urls.length < 0) ? 0 : 1,
+								opacity: (isMoreImagesShown || urls.length < 1) ? 0 : 1,
 								transition: {
 									duration: 0.2,
 									delay: isMoreImagesShown ? 0 : 0.3,

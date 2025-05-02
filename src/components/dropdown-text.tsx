@@ -15,7 +15,7 @@ export default function DropdownText({
 
 	return (
 		<div className="relative mb-4">
-			<div className="relative bg-white overflow-hidden">
+			<div className="relative bg-background overflow-hidden">
 				<button
 					type="button"
 					className="flex justify-between gap-2 text-xl py-2 cursor-pointer w-full relative z-20 border-b border-gray-200 focus:outline-none"
