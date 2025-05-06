@@ -1,3 +1,4 @@
+import { Button } from "@/components/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
@@ -60,10 +61,10 @@ export default function Loading() {
 						</div>
 
 						<div className="flex w-full gap-8 items-center mb-4">
-							<Skeleton className="w-full h-[52px]" />
-							<Skeleton className="w-full h-[52px]" />
-							{/* <Button variant="outline">Add to cart</Button> */}
-							{/* <Button>Buy now</Button> */}
+							{/* <Skeleton className="w-full h-[52px]" />
+							<Skeleton className="w-full h-[52px]" /> */}
+							<Button variant="outline">Add to cart</Button>
+							<Button>Buy now</Button>
 						</div>
 
 						{/* <DropdownText title={"Dimensions"} text={product.dimensions} /> */}
