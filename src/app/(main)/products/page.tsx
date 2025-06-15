@@ -1,5 +1,5 @@
 import Pagination from "./_components/pagination";
-import Image from "next/image";
+// import Image from "next/image";
 import ProductList from "./_components/product-list";
 import { getQueryClient } from "@/lib/get-query-client";
 import { getAllProducts } from "@/actions/product";
@@ -10,22 +10,25 @@ export default async function ProductsPage() {
 
 	await queryClient.prefetchQuery({
 		queryKey: ["products"],
-		queryFn: getAllProducts,
+		queryFn: () => getAllProducts(),
 	});
 
 	return (
 		<HydrationBoundary state={dehydrate(queryClient)}>
 			<div className="w-full bg-[#f8f8f8] pb-8">
-				<Image
+				{/* <Image
 					src="/Handmade.jpg"
 					width={0}
 					height={0}
 					sizes="100vw"
 					className="w-full h-auto max-h-96 object-cover mb-8"
 					alt="handmade image"
-				/>
+				/> */}
 
 				<div className="max-w-6xl mx-auto">
+					<div className="mt-8">
+						{/* <Filters /> */}
+					</div>
 					<ProductList />
 					<div className="mt-8">
 						<div className="flex justify-center gap-8">

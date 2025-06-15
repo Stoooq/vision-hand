@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1745658453912,
-      "tag": "0000_closed_psylocke",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1745660641098,
-      "tag": "0001_brown_squadron_supreme",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1745667730625,
-      "tag": "0002_public_dark_beast",
+      "when": 1749935523892,
+      "tag": "0000_colorful_master_mold",
       "breakpoints": true
     }
   ]

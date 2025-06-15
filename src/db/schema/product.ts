@@ -14,6 +14,7 @@ import { z } from "zod";
 import { AllCategories } from "@/lib/const";
 import { user } from "./user";
 import { cartItem } from "./cartItem";
+import { comment } from "./comment";
 
 export const categoryEnum = pgEnum("category_enum", AllCategories);
 
@@ -39,6 +40,7 @@ export const productRelations = relations(product, ({ one, many }) => ({
 	}),
 	image: many(image),
 	cartItems: many(cartItem),
+	comments: many(comment),
 }));
 
 export const productInsertSchema = createInsertSchema(product, {

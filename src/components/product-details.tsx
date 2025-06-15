@@ -9,30 +9,23 @@ import { toast } from "sonner";
 import { useOnClickOutside } from "usehooks-ts";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "./button";
-import { useQuery } from "@tanstack/react-query";
-import { getAllProducts } from "@/actions/product";
 import { User } from "@supabase/supabase-js";
-import Loading from "@/app/(main)/products/_components/Loading";
+import { ProductInsertType } from "@/db/schema/product";
+import { ImageInsertType } from "@/db/schema/image";
+import { CommentInsertType } from "@/db/schema/comment";
+import { addComment } from "@/actions/add-comment";
 
-export default function ProductPage({
+export default function ProductDetails({
+	product,
 	productId,
 	user,
 }: {
+	product: ProductInsertType & { image: ImageInsertType[] } & {
+		comments: CommentInsertType[];
+	};
 	productId: number;
-	user: User | null;
+	user: User;
 }) {
-	const {
-		data: product,
-		isPending,
-		isError,
-	} = useQuery({
-		queryKey: ["products"],
-		queryFn: getAllProducts,
-		select: (allProducts) => {
-			return allProducts?.find((product) => product.id === productId);
-		},
-	});
-
 	const router = useRouter();
 	const ref = useRef<HTMLDivElement>(null);
 	useOnClickOutside(ref as RefObject<HTMLDivElement>, () =>
@@ -42,7 +35,7 @@ export default function ProductPage({
 
 	const [isEditPending, startEditTransition] = useTransition();
 	const handleEdit = () => {
-		startEditTransition(async () => {});
+		router.push(`/edit/${productId}`);
 	};
 
 	const [isDeletePending, startDeleteTransition] = useTransition();
@@ -68,17 +61,30 @@ export default function ProductPage({
 		});
 	};
 
-	if (isPending) {
-		return <Loading />;
-	}
-
-	if (isError) {
-		return <div>Error loading product data. Please try again later.</div>;
-	}
-
-	if (!product) {
-		return <div>Product not found.</div>;
-	}
+	const [isNewCommentPending, startNewCommentTransition] = useTransition();
+	const [commentContent, setCommentContent] = useState("");
+	const handleNewComment = () => {
+		startNewCommentTransition(async () => {
+			addComment({
+				userId: user.id,
+				userName: user.user_metadata?.full_name || user.email,
+				content: commentContent,
+				productId,
+			}).then((res) => {
+				if (res.success) {
+					toast.success(res.success, {
+						description: "Comment was added succesfully",
+					});
+					router.refresh();
+				}
+				if (res.error) {
+					toast.error(res.error, {
+						description: "Something went wrong",
+					});
+				}
+			});
+		});
+	};
 
 	const canEdit = user
 		? user.id === product.userId || user.user_metadata?.role === "admin"
@@ -149,7 +155,7 @@ export default function ProductPage({
 														This product will be deleted permanently and cannot
 														be recovered.
 													</div>
-													<Button onClick={() => handleDelete(product.id)}>
+													<Button onClick={() => handleDelete(productId)}>
 														Confirm
 													</Button>
 												</motion.div>
@@ -160,7 +166,7 @@ export default function ProductPage({
 							)}
 						</div>
 
-							<DropdownText title={"Description"} text={product.description} />
+						<DropdownText title={"Description"} text={product.description} />
 
 						<div className="flex w-full gap-24 items-center mb-4 text-xl">
 							<div className="flex items-center flex-1 gap-2">
@@ -185,6 +191,46 @@ export default function ProductPage({
 						<DropdownText title={"Dimensions"} text={product.dimensions} />
 
 						<DropdownText title={"Material Details"} text={product.material} />
+					</div>
+				</div>
+				<div className="mt-10">
+					<div className="text-4xl font-bold">Comments</div>
+					<div className="">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+							<Button onClick={handleNewComment} disabled={isNewCommentPending}>
+								Add new comment
+							</Button>
+							<div className="mt-4">
+								<textarea
+									className="w-full border border-gray-300 p-2"
+									placeholder="Enter your comment here..."
+									value={commentContent}
+									onChange={(e) => setCommentContent(e.target.value)}
+								/>
+							</div>
+						</div>
+						{product.comments.length > 0 ? (
+							<div className="space-y-4 mt-6">
+								{product.comments.map((comment) => (
+									<div
+										key={comment.createdAt}
+										className="bg-gray-50 p-4 border border-gray-200"
+									>
+										<div className="flex items-center mb-2">
+											<div className="font-semibold text-gray-800 mr-2">
+												{comment.userName}
+											</div>
+											<span className="text-xs text-gray-400">
+												{new Date(comment.createdAt).toLocaleString()}
+											</span>
+										</div>
+										<p className="text-gray-700">{comment.content}</p>
+									</div>
+								))}
+							</div>
+						) : (
+							"No comments"
+						)}
 					</div>
 				</div>
 			</div>
